@@ -3,6 +3,7 @@ var obstacles = [];
 var score = 0;
 var highScore = localStorage.getItem('highScore') || 0;
 var gameSpeed = 2;
+var canPassThroughObstacles = false; // New state for player
 
 function createObstacle() {
   var obstacle = document.createElement('div');
@@ -40,7 +41,7 @@ function gameLoop() {
     var obstacle = obstacles[i];
     var obstacleRect = obstacle.getBoundingClientRect();
 
-    if (
+    if (!canPassThroughObstacles &&
       playerRect.top < obstacleRect.bottom &&
       playerRect.bottom > obstacleRect.top &&
       playerRect.right > obstacleRect.left &&
@@ -82,6 +83,10 @@ function gameOver() {
 // Event listeners for shape-shifting controls
 
 document.addEventListener('keydown', function(event) {
+  if (event.keyCode === 32) { // Space bar
+    player.style.borderRadius = '0';
+    canPassThroughObstacles = true;
+  }
   switch (event.keyCode) {
     case 32: // Space bar
       player.style.borderRadius = '0';
@@ -102,8 +107,9 @@ document.addEventListener('keydown', function(event) {
 });
 
 document.addEventListener('keyup', function(event) {
-  if (event.keyCode === 32) {
+  if (event.keyCode === 32) { // Space bar
     player.style.borderRadius = '50%';
+    canPassThroughObstacles = false; // Disable passing through obstacles
   }
 });
 
